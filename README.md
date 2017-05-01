@@ -21,50 +21,59 @@ The controller will have one joystick control the cymbals and the floor Tom-tom 
 (http://www.ebay.com/p/Joystick-Breakout-Module-Shield-Joystick-Ps2-Game-Controller-for-Arduino/1748459619 "A similar look to my design")
 
 
-# Scripts
-## PlayerMovement
-```C#
-	public static int speed = 1;
-	public Vector3 direction = Vector3.left;
+# ARDUINO
+```
+int xPin = A1;
+int yPin = A0;
+int buttonPin = 2;
+int x2Pin = A3;
+int y2Pin = A4;
+int button2Pin = 4;
 
-	void Update () {
+int xPosition = 0;
+int yPosition = 0;
+int buttonState = 0;
+int x2Position = 0;
+int y2Position = 0;
+int button2State = 0;
 
-		transform.Translate (direction * speed * Time.deltaTime);
-	}
-  ```
-## Reset
-```C#
-public GameObject player;
+void setup() {
+  // initialize serial communications at 9600 bps:
+  Serial.begin(9600); 
+  
+  pinMode(xPin, INPUT);
+  pinMode(yPin, INPUT);
+   pinMode(x2Pin, INPUT);
+  pinMode(y2Pin, INPUT);
 
-	void OnTriggerEnter(Collider other){
+  //activate the button resistor
+  pinMode(buttonPin, INPUT_PULLUP); 
+  pinMode(button2Pin, INPUT_PULLUP);
+  
+}
 
-		if (other.tag == "Note1") {
-			SceneManager.LoadScene ("currentScene");
-			Debug.Log ("Fck this sht",gameObject);
-		}
-	}
-  ```
-## DestroyWalls
-```C#
-public Text keyText;
+void loop() { //Reading the values of the pins
+  xPosition = analogRead(xPin);
+  yPosition = analogRead(yPin);
+  buttonState = digitalRead(buttonPin);
+  x2Position = analogRead(x2Pin);
+  y2Position = analogRead(y2Pin);
+  button2State = digitalRead(button2Pin);
+  //printing the values
+  Serial.print("X: ");
+  Serial.print(xPosition);
+  Serial.print(" | Y: ");
+  Serial.print(yPosition);
+  Serial.print(" | Button: ");
+  Serial.println(buttonState);
+   Serial.print("X2: ");
+  Serial.print(x2Position);
+  Serial.print(" | Y2: ");
+  Serial.print(y2Position);
+  Serial.print(" | Button2: ");
+  Serial.println(button2State);
 
-	void Update () {
-		notesUI ();
-	
-	}
-	void notesUI(){
-		bool enablekeyText = false;
-		RaycastHit keyInfo;
-		Transform cam = Camera.main.transform;
-		if (Physics.Raycast (cam.position, cam.forward, out keyInfo, 5f)) {
-			if (keyInfo.transform.tag == "Note1") {
-				enablekeyText = true;
-				keyText.text = "E";
-				if (Input.GetKeyDown (KeyCode.E)) {
-					Destroy (GameObject.FindWithTag ("Note1"));
-				}
-			}
-		}
-		keyText.enabled = enablekeyText;
-	}
+  delay(500); // add some delay between reads
+}
+
   ```
